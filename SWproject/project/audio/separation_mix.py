@@ -84,7 +84,7 @@ def mix_audio_tracks(non_drum_tensor: torch.Tensor, audio_path: Path, output_dir
     output_dir.mkdir(exist_ok=True)
 
     # 출력 파일 경로 설정
-    mix_path = output_dir / f"{audio_path.stem[:-8]}(mix).{audio_format}"
+    mix_path = output_dir / f"{audio_path.stem[:-7]}(mix).{audio_format}"
     sf.write(str(mix_path), out_mix, sr)
     logger.info(f"{mix_path.stem}.mp3 파일이 생성되었습니다.")
 
