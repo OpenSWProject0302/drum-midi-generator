@@ -80,10 +80,25 @@ def expend_structure(structure: str, phrase_bars: int) -> list[str]:
     if structure == "S-M-M-E":
         return ["S"] + ["M"] * (phrase_bars - 2) + ["E"]
     elif structure == "S-M-S-E":
-        return ["S", "M"] * (phrase_bars // 2 - 1) + ["S", "E"]
+        if phrase_bars % 2 == 0:
+            return ["S", "M"] * (phrase_bars // 2 - 1) + ["S", "E"]
+        else:
+            return ["S", "M"] * (phrase_bars // 2) + ["E"]
+    elif structure == "S-E-M-E":
+        if phrase_bars % 2 == 0:
+            return ["S", "E"] + ["M", "E"] * (phrase_bars // 2 - 1)
+        else:
+            return ["S"] + ["M", "E"] * (phrase_bars // 2)
     elif structure == "S-S-S-S":
         return ["S"] * phrase_bars
     elif structure == "S-S-S-E":
         return ["S"] * (phrase_bars - 1) + ["E"]
+    elif structure == "S-E-E-E":
+        return ["S"] + ["E"] * (phrase_bars - 1)
+    elif structure == "S-E-S-E":
+        if phrase_bars % 2 == 0:
+            return ["S", "E"] * (phrase_bars // 2)
+        else:
+            return ["S", "E"] * (phrase_bars // 2 - 1) + ["S"]
     else:
         return base * (phrase_bars // len(base)) + base[:phrase_bars % len(base)]

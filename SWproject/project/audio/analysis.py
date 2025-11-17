@@ -2,16 +2,13 @@ import numpy as np
 from pathlib import Path
 import librosa
 
-def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, frame_length=2048, bar_beats: int = 4) -> dict:
+def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, bar_beats: int = 4) -> dict:
     # 오디오를 불러와 박자, 프레이즈 전환을 감지
     y, sr = librosa.load(audio_path, res_type='kaiser_best', sr=None, mono=True)
     y_trimmed, (start, end) = librosa.effects.trim(y, top_db=60)
     y = y_trimmed
 
     onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length, aggregate=np.median)
-
-    detected_tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr, onset_envelope=onset_env, hop_length=hop_length)
-    beat_times = librosa.frames_to_time(beat_frames, sr=sr, hop_length=hop_length)
 
     seconds_per_beat = 60.0 / tempo
     seconds_per_bar = seconds_per_beat * bar_beats
@@ -33,6 +30,7 @@ def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, fram
             bar_strengths.append(0.0)
 
     bar_strengths = np.array(bar_strengths)
+    
     delta = np.abs(np.diff(bar_strengths))
     threshold = np.mean(delta) + np.std(delta)
     transition_bars = np.where(delta > threshold)[0] + 1 # +1 하면 다음 마디 인덱스
