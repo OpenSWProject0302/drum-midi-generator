@@ -3,7 +3,7 @@ from mido import MidiTrack
 from patterns.drum_patterns import DRUM_PATTERNS
 from midi.drum_events import play_drum
 
-def write_drum_patterns_easy(track:MidiTrack, genre: str, phrases: list) -> MidiTrack:
+def write_drum_patterns_easy(track:MidiTrack, genre: str, phrases: list, start_offset: int) -> MidiTrack:
     # 장르에 맞는 드럼 패턴을 MIDI 트랙에 기록 (쉬움 난이도: 가장 쉬운 패턴(1)만 프레이즈에 맞춰 배치)
     pattern = DRUM_PATTERNS[genre][1]
 
@@ -16,11 +16,11 @@ def write_drum_patterns_easy(track:MidiTrack, genre: str, phrases: list) -> Midi
                 "E": "end"
             }[token]
 
-            play_drum(track, pattern[part])
+            play_drum(track, pattern[part], start_offset)
 
     return track
 
-def write_drum_patterns_normal(track:MidiTrack, genre: str, phrases: list, strengths: list) -> MidiTrack:
+def write_drum_patterns_normal(track:MidiTrack, genre: str, phrases: list, strengths: list, start_offset: int) -> MidiTrack:
     # 장르에 맞는 드럼 패턴을 MIDI 트랙에 기록 (기본 난이도: strengths에 따라 배치)
     patterns = DRUM_PATTERNS[genre]
     pattern_keys = sorted(patterns.keys())
@@ -62,7 +62,7 @@ def write_drum_patterns_normal(track:MidiTrack, genre: str, phrases: list, stren
                 "E": "end"
             }[token]
 
-            play_drum(track, pattern_id[part])
+            play_drum(track, pattern_id[part], start_offset)
 
     return track
 
