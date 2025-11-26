@@ -13,6 +13,7 @@ def generate_drum_midi_from_audio(audio_path: Path, genre: str, tempo: int, leve
     num_bars = result["num_bars"]
     transition_bars = result["transition_bars"]
     phrase_strengths = result["phrase_strengths"]
+    start_offset = result["start_offset"]
 
     track = MidiTrack()
     track.append(MetaMessage('time_signature', numerator=4, denominator=4))
@@ -32,8 +33,8 @@ def generate_drum_midi_from_audio(audio_path: Path, genre: str, tempo: int, leve
 
     # 3. 각 프레이즈에 드럼 리듬을 패턴대로 추가
     if level == "Easy":
-        track = write_drum_patterns_easy(track, genre, phrases)
+        track = write_drum_patterns_easy(track, genre, phrases, start_offset)
     elif level == "Normal":
-        track = write_drum_patterns_normal(track, genre, phrases, phrase_strengths)
+        track = write_drum_patterns_normal(track, genre, phrases, phrase_strengths, start_offset)
 
     return track
