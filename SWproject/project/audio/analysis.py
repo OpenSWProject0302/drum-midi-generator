@@ -2,11 +2,13 @@ import numpy as np
 from pathlib import Path
 import librosa
 
-def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, bar_beats: int = 4) -> dict:
+def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, bar_beats: int = 4, ticks_per_beat: int = 480) -> dict:
     # 오디오를 불러와 박자, 프레이즈 전환을 감지
     y, sr = librosa.load(audio_path, res_type='kaiser_best', sr=None, mono=True)
     y_trimmed, (start, end) = librosa.effects.trim(y, top_db=60)
     y = y_trimmed
+    start_offset_sec = start / sr
+    start_offset_ticks = int(start_offset_sec * ticks_per_beat * 4)
 
     onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length, aggregate=np.median)
 
@@ -46,5 +48,6 @@ def detect_phrase_transitions(audio_path: Path, tempo: int, hop_length=512, bar_
         "tempo": tempo,
         "num_bars": num_bars,
         "transition_bars": transition_bars.tolist(),
-        "phrase_strengths": phrase_strengths
+        "phrase_strengths": phrase_strengths,
+        "start_offset": start_offset_ticks
     }
