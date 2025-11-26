@@ -19,7 +19,8 @@ def separate_merge_drum(audio_path: Path, drum_audio_path: Path, output_dir=None
 
     # y_trimmed → Tensor 변환
     y, sr = librosa.load(audio_path, res_type='kaiser_best', sr=None, mono=False)
-    y_trimmed, _ = librosa.effects.trim(y, top_db=60)
+    y_trimmed, index = librosa.effects.trim(y, top_db=60)
+    start_idx = index[0]
 
     if y_trimmed.ndim == 1:
         wav_tensor = torch.from_numpy(y_trimmed).unsqueeze(0)  # (1, samples)
@@ -66,9 +67,10 @@ def mix_audio_tracks(non_drum_tensor: torch.Tensor, audio_path: Path, output_dir
         midi_audio = np.repeat(midi_audio, 2, axis=1)
 
     # 6) 길이 맞추기
-    max_len = max(len(non_drum), len(midi_audio))
+    max_len = max(offset + len(non_drum), len(midi_audio))
     out_mix = np.zeros((max_len, 2))
-    out_mix[:len(non_drum), :] += non_drum
+
+    out_mix[offset:offset + len(non_drum), :] += non_drum
     out_mix[:len(midi_audio), :] += midi_audio
 
     # 4) Normalize (clip 방지)
