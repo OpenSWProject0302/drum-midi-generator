@@ -40,10 +40,10 @@ def separate_merge_drum(audio_path: Path, drum_audio_path: Path, output_dir=None
         if name != "drums":
             non_drum_tensor += sources[i]
 
-    mix_audio_path = mix_audio_tracks(non_drum_tensor, drum_audio_path, output_dir, audio_format, sr)
+    mix_audio_path = mix_audio_tracks(non_drum_tensor, drum_audio_path, start_idx, output_dir, audio_format, sr)
     return mix_audio_path
 
-def mix_audio_tracks(non_drum_tensor: torch.Tensor, audio_path: Path, output_dir=None, audio_format="mp3", sr: int = 44100):
+def mix_audio_tracks(non_drum_tensor: torch.Tensor, audio_path: Path, offset: int = 0, output_dir=None, audio_format="mp3", sr: int = 44100):
     logger = logging.getLogger(__name__)
     # 1) Tensor → numpy 변환
     non_drum = non_drum_tensor.cpu().numpy()
